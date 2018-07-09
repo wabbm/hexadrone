@@ -42,65 +42,67 @@ log("Ground Speed: %s" % drone.groundspeed)
 log("%s" % drone.location.global_frame)
 
 print("=" * 50)
+print(" " * 15, "READY FOR INSTRUCTION", " " * 15)
+print("=" * 50)
 
-indent_level = 0
-log("Autopilot Initalization.")
+def prearmCheck():
+	indent_level = 0
+	log("Autopilot Initalization.")
 
-indent_level += 1
-
-#Ensure GPS is functional
-log("GPS Check:", indent_level)
-indent_level += 1
-
-#Getting GPS Status stat >= 3. 3D Lock
-log("Current GPS Status: %s" % drone.gps_0.fix_type, indent_level)
-
-while drone.gps_0.fix_type < 3:
-	log("GPS not fixed: %s" % drone.gps_0.fix_type, indent_level + 1)
-	time.sleep(5)
-log("Current GPS Status: OKAY.", indent_level)
-
-indent_level -= 1
-
-log("Home location:", indent_level)
-#checking for home location
-if not drone.home_location:
 	indent_level += 1
-	log("Home location not found. Using current position. %s" % drone.location.global_frame, indent_level)
-	#Getting current location
-	currentLocation = drone.location.global_frame
-	#Setting current location
-	drone.home_location = currentLocation
-	#Confirmation
-	commands_ready(drone)
-	log("New Location: %s" % drone.home_location, indent_level)
+
+	#Ensure GPS is functional
+	log("GPS Check:", indent_level)
+	indent_level += 1
+	#Getting GPS Status stat >= 3. 3D Lock
+	log("Current GPS Status: %s" % drone.gps_0.fix_type, indent_level)
+	while drone.gps_0.fix_type < 3:
+		log("GPS not fixed: %s" % drone.gps_0.fix_type, indent_level + 1)
+		time.sleep(5)
+	log("Current GPS Status: OKAY.", indent_level)
+
 	indent_level -= 1
-else:
-	log("Pre-existing location: %s" % drone.home_location)
 
-indent_level -= 1
+	log("Home location:", indent_level)
+	#checking for home location
+	if not drone.home_location:
+		indent_level += 1
+		log("Home location not found. Using current position. %s" % drone.location.global_frame, indent_level)
+		#Getting current location
+		currentLocation = drone.location.global_frame
+		#Setting current location
+		drone.home_location = currentLocation
+		#Confirmation
+		commands_ready(drone)
+		log("New Location: %s" % drone.home_location, indent_level)
+		indent_level -= 1
+	else:
+		log("Pre-existing location: %s" % drone.home_location)
 
-time.sleep(5)
+	indent_level -= 1
 
-#TODO: Testing Wildcard callback
+	#Set Autopilot Mode
+	log("Set GUIDED Mode for Take Off...")
+	drone.mode = VehicleMode("GUIDED")
+	while not drone.mode == "GUIDED":
+		time.sleep(0.5)
 
-print("="*50)
+	log("Mode set.")
 
-# Demonstrate getting callback on any attribute change
-def wildcard_callback(self, attr_name, value):
-	if attr_name == "attitude":
-    		print(" CALLBACK: (%s): %s" % (attr_name,value))
+	
+#TODO: TEMPORARY INTERFACE
+#USER COMMAND HANDLER
 
-print("\nAdd attribute callback detecting ANY attribute change")     
-drone.add_attribute_listener('*', wildcard_callback)
-
-
-print(" Wait 1s so callback invoked before observer removed")
-time.sleep(5)
-
-print(" Remove Vehicle attribute observer")    
-# Remove observer added with `add_attribute_listener()`
-drone.remove_attribute_listener('*', wildcard_callback)
-
+while True:
+	inp = raw_input(">>> ")
+	
+	if inp == "prearm":
+		prearmCheck()
+	elif inp == "exit":
+		#TODO: Ensure Vehicle is on the ground.
+		log("EXIT.")
+	else:
+		log("INVALID Command.")
+	
 
 drone.close()
