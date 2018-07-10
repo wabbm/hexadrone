@@ -45,12 +45,24 @@ print("=" * 50)
 print(" " * 15, "READY FOR INSTRUCTION", " " * 15)
 print("=" * 50)
 
+def groundCheck():
+	#at sea level
+	return drone.location.global_frame.alt == 0
+	#potentially change to sonar return
+
+	
 def prearmCheck():
+	#pass dronekit test
+	while not drone.is_armable:
+		log("failed original prearming test")
+		time.sleep(0.5)
+	
+	
 	indent_level = 0
 	log("Autopilot Initalization.")
 
 	indent_level += 1
-
+	
 	#Ensure GPS is functional
 	log("GPS Check:", indent_level)
 	indent_level += 1
@@ -100,6 +112,7 @@ while True:
 		prearmCheck()
 	elif inp == "exit":
 		#TODO: Ensure Vehicle is on the ground.
+		
 		log("EXIT.")
 	else:
 		log("INVALID Command.")
