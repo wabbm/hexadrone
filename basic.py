@@ -108,7 +108,7 @@ def takeoff(aTargetAltitude, drone):
 	
 	
 	
-	
+#TESTING	
 # Set up option parsing to get connection string
 import argparse
 parser = argparse.ArgumentParser(description='Commands vehicle using vehicle.simple_goto.')
