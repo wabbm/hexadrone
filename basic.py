@@ -108,9 +108,19 @@ def takeoff(aTargetAltitude, drone):
         	time.sleep(1)
 	
 	
-def turning(direction, angle):
-	#verify legal data
+def turning(direction, angle, drone):
+	log("turning command received")
+	goal = drone.heading
+	if angle > 0 and angle < 360:
+		goal += angle
+		goal = goal % 360
+	else：
+		angle = (int)input("invalid value, please re enter")
 	drone.mode = VehicleMode("CIRCLE")
+	if drone.heading == goal:
+		log("expected position reached")
+		drone.mode = VehicleMode("GUIDED")
+		
 	#end turning
 	
 	
