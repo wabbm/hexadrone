@@ -109,7 +109,9 @@ def takeoff(aTargetAltitude, drone):
 	
 	
 def turning(direction, angle):
-	
+	#verify legal data
+	drone.mode = VehicleMode("CIRCLE")
+	#end turning
 	
 	
 
