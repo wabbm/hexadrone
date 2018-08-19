@@ -71,7 +71,6 @@ def arming(drone):
 		print("waiting to be armed...")
 		time.sleep(1)
 	
-
 def landing(drone):
 	log("landing command received")
 	drone.mode = VehicleMode("RTL")
@@ -107,6 +106,15 @@ def takeoff(aTargetAltitude, drone):
            	 	print("Reached target altitude")
             		break
         	time.sleep(1)
+	
+	
+def turning(direction, angle):
+	
+	
+	
+
+	
+	
 	
 	
 	
