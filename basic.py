@@ -42,14 +42,14 @@ def prearming(drone):
 	print("Basic pre-arm checks")
 	while not drone.is_armable:
 		print("Waiting for vehicle to initialise...")
-        time.sleep(5)
+        	time.sleep(5)
 	
-	print("3D GPS check...") 
+	log("3D GPS check...") 
 	while(drone.gps_0.fix_type < 3):
 		print("Checking GPS", vehicle.gps_0.fix_type)
 		time.sleep(3)
 	print("GPS 3D locked")
-	print("Check for home location...")
+	log("Check for home location...")
 	if not drone.home_location:
 		print("Home location not found. Using current position.", drone.location.global_frame)
 		currentLocation = drone.location.global_frame
@@ -58,9 +58,10 @@ def prearming(drone):
 		print("New Location: ", drone.home_location)
 	else:
 		print("Pre-existing location: ", drone.home_location)
-	print("Prearming ok")
+	print("Prearming done")
 	
 def arming(drone):
+	log("arming demand received")
 	prearming(drone)
 	print("passed prearming")
 	print("arming motor")
@@ -72,6 +73,7 @@ def arming(drone):
 	
 
 def landing(drone):
+	log("landing command received")
 	drone.mode = VehicleMode("RTL")
 	while not drone.mode == "RTL":
 		time.sleep(0.5)
@@ -86,25 +88,25 @@ def landing(drone):
 def takeoff(aTargetAltitude, drone):
     """
     Arms vehicle and fly to aTargetAltitude.
-	
+    """
+	log("takeoff command received")
 	while not drone.armed:
-        print(" Waiting for arming...")
-        time.sleep(1)
-	"""
-    print("Taking off!")
-	
-    drone.simple_takeoff(aTargetAltitude)  # Take off to target altitude
+		print(" Waiting for arming...")
+		time.sleep(1)
 
+    	 print("Taking off!") 
+   	 drone.simple_takeoff(aTargetAltitude)  # Take off to target altitude
+	
     # Wait until the vehicle reaches a safe height before processing the goto
     #  (otherwise the command after Vehicle.simple_takeoff will execute
     #   immediately).
-    while True:
-        print(" Altitude: ", drone.location.global_relative_frame.alt)
+	while True:
+		print(" Altitude: ", drone.location.global_relative_frame.alt)
         # Break and return from function just below target altitude.
-        if drone.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
-            print("Reached target altitude")
-            break
-        time.sleep(1)
+        	if drone.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
+           	 	print("Reached target altitude")
+            		break
+        	time.sleep(1)
 	
 	
 	
