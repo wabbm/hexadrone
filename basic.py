@@ -117,19 +117,16 @@ def turning(direction, angle, drone):
 	else：
 		angle = (int)input("invalid value, please re enter")
 	drone.mode = VehicleMode("CIRCLE")
-	if drone.heading <= goal + 5 or drone.heading >= goal - 5:
-		log("expected position reached")
-		drone.mode = VehicleMode("GUIDED")
+	while True:
+		if drone.heading <= goal + 5 or drone.heading >= goal - 5:
+			log("expected position reached")
+			drone.mode = VehicleMode("GUIDED")
+			break
 		
 	#end turning
 	
 	
 
-	
-	
-	
-	
-	
 #TESTING	
 # Set up option parsing to get connection string
 import argparse
