@@ -124,7 +124,8 @@ def turning(angle, drone):
 			break
 	#end turning
 
-def changeheight(change, drone):
+def changeheight(heightChange, drone):
+	
 	
 	
 
