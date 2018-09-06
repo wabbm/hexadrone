@@ -115,7 +115,7 @@ def turning(angle, drone):
 		goal += angle
 		goal = goal % 360
 	else：
-		angle = (int)input("invalid value, please re enter")
+		angle = (float)input("invalid value, please re enter")
 	drone.mode = VehicleMode("CIRCLE")
 	while True:
 		if drone.heading <= goal + 5 or drone.heading >= goal - 5:
@@ -124,8 +124,16 @@ def turning(angle, drone):
 			break
 	#end turning
 
-def changeheight(heightChange, drone):
-	
+def changeheight(height = None, drone):
+	log("changing height")
+	if height is not None:
+		heightChange = float(height)
+		while math.isinf(heightChange) or math.isnan(heightChange) or heightChange <= 0:
+			heightChange = (float)input("invalid value, please re enter")
+		print("valid value received ")
+		self._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+                                                  0, 0, 0, 0, 0, 0, 0, heightChange)
+	#still need to change
 	
 	
 
