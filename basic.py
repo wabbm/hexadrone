@@ -3,6 +3,10 @@ from datetime import datetime
 import time
 from dronekit import *
 
+#from pymavlink import mavutil, mavwp
+#from pymavlink.dialects.v10 import ardupilotmega
+
+
 def log(msg, indent = 0):
 	print (datetime.now().strftime('[%Y-%m-%d %H:%M:%S]: '), end='')
 	print ("\t" * indent, end='')
@@ -73,8 +77,8 @@ def arming(drone):
 	
 def landing(drone):
 	log("landing command received")
-	drone.mode = VehicleMode("RTL")
-	while not drone.mode == "RTL":
+	drone.mode = VehicleMode("LAND")
+	while not drone.mode == "LAND":
 		time.sleep(0.5)
 	print("Land mode set")
 	while not drone.location.global_relative_frame.alt <= 0:
@@ -108,14 +112,17 @@ def takeoff(aTargetAltitude, drone):
         	time.sleep(1)
 	
 	
-def turning(angle, drone):
+def turning(angle = 0, drone):
 	log("turning command received")
 	goal = drone.heading
-	if angle > 0 and angle < 360:
-		goal += angle
-		goal = goal % 360
-	else：
-		angle = (float)input("invalid value, please re enter")
+	if isinstance(angle, float):
+		if angle > 0 and angle < 360:
+			goal += angle
+			goal = goal % 360
+		else：
+			angle = (float)input("invalid value, please re enter")
+	else:
+		angle = (float)input("not a float number, please re enter")
 	drone.mode = VehicleMode("CIRCLE")
 	while True:
 		if drone.heading <= goal + 5 or drone.heading >= goal - 5:
@@ -131,9 +138,21 @@ def changeheight(height = None, drone):
 		while math.isinf(heightChange) or math.isnan(heightChange) or heightChange <= 0:
 			heightChange = (float)input("invalid value, please re enter")
 		print("valid value received ")
-		self._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+		self._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_CHANGEALTITUDE,
                                                   0, 0, 0, 0, 0, 0, 0, heightChange)
 	#still need to change
+	
+def goto(locationX = 0, locationY = 0, height = 0, drone, groundspeed = None, airspeed = None):
+	log("going toward point Global Location (relative altitude): %s" % drone.location.global_relative_frame")
+	target = LocationGlobal(float(locationX), float(locationY), float(height))
+	if drone.mode != "GUIDED":
+	    ans = (String)input("Drone mode isn't in guided, change or not y/n")
+	    if ans is "y":
+	    	drone.mode = VehicleMode("GUIDED")
+	vehicle.simple_goto(target)
+	log("heading toward the target location")
+	
+	
 	
 	
 
