@@ -165,7 +165,7 @@ def changeheight(height = None, drone):
 	#still need to change
 	
 def goto(locationX = 0, locationY = 0, height = 0, drone, groundspeed = None, airspeed = None):
-	log("going toward point Global Location (relative altitude): %s" % drone.location.global_relative_frame")
+	log("going toward point Global Location (relative) : %s" % drone.location.global_relative_frame")
 	target = LocationGlobal(float(locationX), float(locationY), float(height))
 	if drone.mode != "GUIDED":
 	    ans = (String)input("Drone mode isn't in guided, change or not y/n")
