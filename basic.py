@@ -130,7 +130,29 @@ def turning(angle = 0, drone):
 			drone.mode = VehicleMode("GUIDED")
 			break
 	#end turning
-
+	
+def condition_yaw(heading, relative=False, turningSpeed = 0, cw 1):
+	log("turning command received")
+	if relative:
+		is_relative=1 #yaw relative to direction of travel
+	else:
+		is_relative=0 #yaw is an absolute angle
+	if not isinstance(heading, float):
+		heading = (float)input("not a float number, please re enter")
+	# create the CONDITION_YAW command using command_long_encode()
+	msg = vehicle.message_factory.command_long_encode(
+		0, 0,    # target system, target component
+		mavutil.mavlink.MAV_CMD_CONDITION_YAW, #command
+		0, #confirmation
+		heading,    # param 1, yaw in degrees
+		turningSpeed,          # param 2, yaw speed deg/s
+		cw,          # param 3, direction -1 ccw, 1 cw
+		is_relative, # param 4, relative offset 1, absolute angle 0
+		0, 0, 0)    # param 5 ~ 7 not used
+	# send command to vehicle
+	vehicle.send_mavlink(msg)
+	log("expected position reached")
+	
 def changeheight(height = None, drone):
 	log("changing height")
 	if height is not None:
@@ -153,7 +175,29 @@ def goto(locationX = 0, locationY = 0, height = 0, drone, groundspeed = None, ai
 	log("heading toward the target location")
 	
 	
-	
+def send_ned_velocity(velocity_x, velocity_y, velocity_z, duration):
+    """
+    Move vehicle in direction based on specified velocity vectors.
+    """
+    msg = vehicle.message_factory.set_position_target_local_ned_encode(
+        0,       # time_boot_ms (not used)
+        0, 0,    # target system, target component
+        mavutil.mavlink.MAV_FRAME_LOCAL_NED, # frame
+        0b0000111111000111, # type_mask (only speeds enabled)
+        0, 0, 0, # x, y, z positions (not used)
+        velocity_x, velocity_y, velocity_z, # x, y, z velocity in m/s
+        0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
+        0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    for x in range(0,duration):
+        vehicle.send_mavlink(msg)
+        time.sleep(1)
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	
 
 #TESTING	
