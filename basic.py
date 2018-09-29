@@ -153,19 +153,31 @@ def condition_yaw(heading, relative=False, turningSpeed = 0, cw 1):
 	vehicle.send_mavlink(msg)
 	log("expected position reached")
 	
-def changeheight(height = None, drone):
+def changeheight(height = None, drone, w, x, y , z, roll = 0, pitch = 0, yaw = 0):
 	log("changing height")
 	if height is not None:
 		heightChange = float(height)
 		while math.isinf(heightChange) or math.isnan(heightChange) or heightChange <= 0:
 			heightChange = (float)input("invalid value, please re enter")
 		print("valid value received ")
-		self._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_CHANGEALTITUDE,
-                                                  0, 0, 0, 0, 0, 0, 0, heightChange)
-	#still need to change
+		msg = vehicle.message_factory.set_attitude_target_encode(
+				0, #time_boot_ms	uint32_t	Timestamp in milliseconds since system boot. Used to avoid duplicate commands. 0 to ignore.)
+				0,#System ID
+				0,#Component ID
+				0,#Mappings: If any of these bits are set, the corresponding input should be ignored: (LSB is bit 1) bit 1: body roll rate, bit 2: body pitch rate, bit 3: body yaw rate. bit 4-bit 6: reserved, bit 7: throttle bit 8: attitude 
+				  #Currently, throttle and attitude must be set to 0, i.e. not ignored
+				  #type uint32_t, uint8_t, int8_t, int8_t
+				w,
+				x,
+				y,
+				z,# in quaternion location	
+				roll, pitch, yaw,
+				0) # thrust
+		drone.send_mavlink(msg)
+		#still need to change
 	
 def goto(locationX = 0, locationY = 0, height = 0, drone, groundspeed = None, airspeed = None):
-	log("going toward point Global Location (relative) : %s" % drone.location.global_relative_frame")
+	log("going toward point Global Location (relative)")
 	target = LocationGlobal(float(locationX), float(locationY), float(height))
 	if drone.mode != "GUIDED":
 	    ans = (String)input("Drone mode isn't in guided, change or not y/n")
@@ -175,7 +187,7 @@ def goto(locationX = 0, locationY = 0, height = 0, drone, groundspeed = None, ai
 	log("heading toward the target location")
 	
 	
-def send_ned_velocity(velocity_x, velocity_y, velocity_z, duration):
+def set_new_velocity(velocity_x, velocity_y, velocity_z, duration):
     """
     Move vehicle in direction based on specified velocity vectors.
     """
